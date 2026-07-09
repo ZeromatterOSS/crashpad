@@ -1,0 +1,15 @@
+"""Crashpad: Chromium's crash-reporting client and handler.
+
+This module provides Bazel build support for Crashpad on linux. The build is
+derived from the upstream BUILD.gn files.
+"""
+
+module(
+    name = "crashpad",
+    version = "0.8.0",
+)
+
+bazel_dep(name = "rules_cc", version = "0.2.19")
+
+# provides @platforms//os and //cpu constraint values
+bazel_dep(name = "platforms", version = "1.1.0")

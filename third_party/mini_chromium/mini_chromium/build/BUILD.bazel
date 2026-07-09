@@ -1,0 +1,14 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+package(default_visibility = ["//visibility:public"])
+
+# mini_chromium build config; target OS/arch derived from compiler macros.
+cc_library(
+    name = "build",
+    hdrs = [
+        "build_config.h",
+        "buildflag.h",
+    ],
+    # Exposed as build/*.h.
+    include_prefix = "build",
+)

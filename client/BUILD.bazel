@@ -1,0 +1,63 @@
+load("//bazel:crashpad.bzl", "crashpad_cc_library")
+
+package(default_visibility = ["//visibility:public"])
+
+crashpad_cc_library(
+    name = "common",
+    srcs = [
+        "annotation.cc",
+        "annotation_list.cc",
+        "crash_report_database.cc",
+        "crashpad_info.cc",
+        "settings.cc",
+    ] + select({
+        "@platforms//os:linux": [
+            "crash_report_database_generic.cc",
+            "crashpad_info_note.S",
+        ],
+        "//conditions:default": [],
+    }),
+    hdrs = [
+        "annotation.h",
+        "annotation_list.h",
+        "crash_report_database.h",
+        "crashpad_info.h",
+        "length_delimited_ring_buffer.h",
+        "ring_buffer_annotation.h",
+        "settings.h",
+        "simple_address_range_bag.h",
+        "simple_string_dictionary.h",
+    ],
+    deps = [
+        "//third_party/mini_chromium/mini_chromium/base",
+        "//util",
+    ],
+)
+
+crashpad_cc_library(
+    name = "client",
+    srcs = [
+        "prune_crash_reports.cc",
+        "crashpad_client_linux.cc",
+        "client_argv_handling.cc",
+    ],
+    hdrs = [
+        "crashpad_client.h",
+        "prune_crash_reports.h",
+        "simulate_crash.h",
+        "simulate_crash_linux.h",
+        "client_argv_handling.h",
+    ],
+    deps = [
+        ":common",
+        "//third_party/lss",
+        "//third_party/mini_chromium/mini_chromium/base",
+        "//util",
+    ],
+)
+
+crashpad_cc_library(
+    name = "pthread_create",
+    srcs = ["pthread_create_linux.cc"],
+    deps = [":client"],
+)

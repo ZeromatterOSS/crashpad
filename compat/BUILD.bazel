@@ -1,0 +1,35 @@
+load("//bazel:crashpad.bzl", "crashpad_cc_library")
+
+package(default_visibility = ["//visibility:public"])
+
+crashpad_cc_library(
+    name = "compat",
+    srcs = select({
+        "@platforms//os:linux": ["linux/sys/mman_memfd_create.cc"],
+        "//conditions:default": [],
+    }),
+    hdrs = select({
+        "@platforms//os:linux": [
+            "non_mac/mach/mach.h",
+            "linux/signal.h",
+            "linux/sys/mman.h",
+            "linux/sys/ptrace.h",
+            "linux/sys/user.h",
+            "non_win/dbghelp.h",
+            "non_win/minwinbase.h",
+            "non_win/timezoneapi.h",
+            "non_win/verrsrc.h",
+            "non_win/windows.h",
+            "non_win/winnt.h",
+        ],
+        "//conditions:default": [],
+    }),
+    includes = [
+        "linux",
+        "non_win",
+    ],
+    deps = [
+        "//third_party/mini_chromium/mini_chromium/base",
+        "//util:no_cfi_icall",
+    ],
+)

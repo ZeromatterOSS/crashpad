@@ -1,0 +1,76 @@
+load("//bazel:crashpad.bzl", "crashpad_cc_binary", "crashpad_cc_library")
+
+package(default_visibility = ["//visibility:public"])
+
+crashpad_cc_library(
+    name = "common",
+    srcs = [
+        "crash_report_upload_rate_limit.cc",
+        "crash_report_upload_thread.cc",
+        "minidump_to_upload_parameters.cc",
+        "user_stream_data_source.cc",
+    ],
+    hdrs = [
+        "crash_report_upload_rate_limit.h",
+        "crash_report_upload_thread.h",
+        "minidump_to_upload_parameters.h",
+        "user_stream_data_source.h",
+    ],
+    deps = [
+        "//client:common",
+        "//minidump",
+        "//snapshot",
+        "//third_party/mini_chromium/mini_chromium/base",
+        "//util",
+        "//util:net",
+    ],
+)
+
+crashpad_cc_library(
+    name = "handler",
+    srcs = [
+        "handler_main.cc",
+        "prune_crash_reports_thread.cc",
+    ] + select({
+        "@platforms//os:linux": [
+            "linux/capture_snapshot.cc",
+            "linux/crash_report_exception_handler.cc",
+            "linux/exception_handler_server.cc",
+            "linux/cros_crash_report_exception_handler.cc",
+        ],
+        "//conditions:default": [],
+    }),
+    hdrs = [
+        "handler_main.h",
+        "prune_crash_reports_thread.h",
+    ] + select({
+        "@platforms//os:linux": [
+            "linux/capture_snapshot.h",
+            "linux/crash_report_exception_handler.h",
+            "linux/exception_handler_server.h",
+            "linux/cros_crash_report_exception_handler.h",
+        ],
+        "//conditions:default": [],
+    }),
+    deps = [
+        ":common",
+        "//client",
+        "//minidump",
+        "//snapshot",
+        "//third_party/mini_chromium/mini_chromium/base",
+        "//tools:tool_support",
+        "//util",
+    ],
+)
+
+crashpad_cc_binary(
+    name = "crashpad_handler",
+    srcs = ["main.cc"],
+    deps = [
+        ":handler",
+        "//client:pthread_create",
+        "//compat",
+        "//third_party/mini_chromium/mini_chromium/base",
+        "//tools:tool_support",
+    ],
+)

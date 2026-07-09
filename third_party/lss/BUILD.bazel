@@ -1,0 +1,15 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+package(default_visibility = ["//visibility:public"])
+
+# Header-only linux_syscall_support.h wrappers.
+cc_library(
+    name = "lss",
+    hdrs = [
+        "lss.h",
+        "lss/linux_syscall_support.h",
+    ],
+    # Selects the embedded copy in lss.h.
+    defines = ["CRASHPAD_LSS_SOURCE_EMBEDDED"],
+    target_compatible_with = ["@platforms//os:linux"],
+)

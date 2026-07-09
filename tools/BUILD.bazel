@@ -1,0 +1,14 @@
+load("//bazel:crashpad.bzl", "crashpad_cc_library")
+
+package(default_visibility = ["//visibility:public"])
+
+# Shared tool/main() helpers.
+crashpad_cc_library(
+    name = "tool_support",
+    srcs = ["tool_support.cc"],
+    hdrs = ["tool_support.h"],
+    deps = [
+        "//:package",
+        "//third_party/mini_chromium/mini_chromium/base",
+    ],
+)

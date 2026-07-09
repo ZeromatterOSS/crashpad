@@ -1,0 +1,10 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+package(default_visibility = ["//visibility:public"])
+
+# libcurl 8.5.0 public headers only; the transport dlopen()s libcurl at runtime.
+cc_library(
+    name = "curl_headers",
+    hdrs = glob(["curl/include/curl/*.h"]),
+    includes = ["curl/include"],
+)
